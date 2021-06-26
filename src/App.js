@@ -35,7 +35,6 @@ const Subtitle = styled.span`
   font-size: 18px;
   color: #c9d1d9;
   font-weight: 600;
-  margin-top: 32px;
 `;
 
 
@@ -73,6 +72,10 @@ const Button = styled.button`
   }
 `;
 
+const AuxBlock = styled.div`
+  margin-top: 32px;
+`;
+
 const aux = [
   {
     transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
@@ -100,6 +103,7 @@ const Main = () => {
   const [mempool, updateTransactionBlockData] = useState({ show: false });
   const [showPendingBlock, updatePendingBlockVisibility] = useState(false);
   const [chainData, updateChainData] = useState(aux);
+  const [newBlockMessage, updateNewBlockMessageVisibility] = useState(false);
   
   const hash = "299bd128c1101fd6";
 
@@ -117,13 +121,18 @@ const Main = () => {
     setTimeout(() => {
       updateTransactionBlockData({ show: false });
       updatePendingBlockVisibility(true);
-    }, 2000);
+    }, 4000);
     
     setTimeout(() => {
       updatePendingBlockVisibility(false);
       updateEnableInputs(true);
       updateChainData([{ transactions: ['1', '2', '3'], number: (chainData[0]?.number + 1 || 1) }, ...chainData]);
-    }, 4000);
+      updateNewBlockMessageVisibility(true);
+    }, 8000);
+
+    setTimeout(() => {
+      updateNewBlockMessageVisibility(false);
+    }, 12000);
   };
 
   return (
@@ -167,16 +176,18 @@ const Main = () => {
           <Button onClick={() => onSubmit()} disabled={!enabledInputs}>ENVIAR</Button>
         </Card>
       </Content>
-      <Content size="80%" padding="24px 20px">
+      <Content size="80%" padding="24px 32px 24px 20px">
         <Title>¿Qué sucede por atrás?</Title>
         <Card>
           <Subtitle>Blockchain</Subtitle>
-          <Blockchain chainData={chainData} />
-          {(mempool.show || showPendingBlock) && <Subtitle>Mempool</Subtitle>}
-          {mempool.show &&
-            <TransactionBlock data={{ hash }} />
-          }
-          {showPendingBlock && <PendingBlock />}
+          <Blockchain chainData={chainData} showNewBlockMessage={newBlockMessage} />
+          <AuxBlock>
+            {(mempool.show || showPendingBlock) && <Subtitle>Mempool</Subtitle>}
+            {mempool.show &&
+              <TransactionBlock data={{ hash }} />
+            }
+            {showPendingBlock && <PendingBlock />}
+          </AuxBlock>
         </Card>
       </Content>
     </Layout>

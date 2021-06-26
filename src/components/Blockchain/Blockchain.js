@@ -2,9 +2,13 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 
+import Icon from '../Icon';
+
 import { colors } from '../../styles/palette';
 
-const Container = styled.div`
+const Container = styled.div``;
+
+const Content = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -53,7 +57,29 @@ const Number = styled.span`
   right: 4px;
 `;
 
-const Blockchain = ({ chainData }) => {
+const MessageBox = styled.div`
+  width: fit-content;
+  padding: 12px;
+  background-color: transparent;
+  border: solid 2px ${colors.success};
+  border-radius: 4px;
+`;
+
+const Message = styled.span`
+  margin: 4px 0;
+  color: ${colors.success};
+  line-height: 1.4;
+  font-weight: 600;
+`;
+
+const MessageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 20px;
+`;
+
+const Blockchain = ({ chainData, showNewBlockMessage }) => {
   const renderBlocks = () => {
     let blocks = chainData.map((block, idx) => {
       if (idx < chainData.length-1) {
@@ -79,7 +105,19 @@ const Blockchain = ({ chainData }) => {
   };
   return (
     <Container>
-      {renderBlocks()}
+    {showNewBlockMessage &&
+        <MessageContainer>
+          <MessageBox>
+            <Message>
+              Se agrega el bloque completo a la cadena
+            </Message>
+          </MessageBox>
+          <Icon type="arrow" className="new-block-arrow" />
+        </MessageContainer>
+      }
+      <Content>
+        {renderBlocks()}
+      </Content>
     </Container>
   );
 };
