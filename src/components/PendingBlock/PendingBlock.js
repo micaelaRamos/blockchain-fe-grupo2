@@ -8,6 +8,7 @@ import { colors } from '../../styles/palette';
 const Content = styled.div`
   display: flex;
   align-items: center;
+  margin-top: 32px;
 `;
 
 const Container = styled.div`
@@ -15,7 +16,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding: 12px;
-  margin-top: 32px;
   background-color: transparent;
   border: solid 2px ${colors.success};
   border-radius: 4px;
@@ -39,24 +39,11 @@ const TransactionBlock = ({ transactions }) => (
     </Container>
     <Icon type="arrow" className="pending-transactions-arrow" />
     <Container>
-      <Transaction>
-        b31d032cfdcf47a399990a71e43c5d1a
-      </Transaction>
-      <Transaction>
-        b31d032cfdcf47a399990a41e43c5d1a
-      </Transaction>
-      <Transaction>
-        b31d032cfdcf45a399990a71e43c5d1a
-      </Transaction>
-      <Transaction>
-        b31d032cfdcf27a399990a71e43c5d1a
-      </Transaction>
-      <Transaction>
-        b31d032cfdcf67a399990a71e43c5d1a
-      </Transaction>
-      <Transaction>
-        b31d032cfdcf48a399990a71e43c5d1a
-      </Transaction>
+      {transactions.map(transaction => 
+        <Transaction>
+          {transaction}
+        </Transaction>
+      )}
     </Container>
   </Content>
 );
