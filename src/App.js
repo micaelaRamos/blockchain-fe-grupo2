@@ -4,7 +4,8 @@ import styled, { css } from 'styled-components';
 import Layout from './components/Layout';
 import Card from './components/Card';
 import Blockchain from './components/Blockchain';
-import Mempool from './components/Mempool';
+import TransactionBlock from './components/TransactionBlock';
+import PendingBlock from './components/PendingBlock';
 
 import './styles/App.scss';
 import { colors } from './styles/palette';
@@ -22,8 +23,16 @@ const Content = styled.div`
 
 const Title = styled.h2`
   margin: 0 0 20px;
-  color: ${colors.textColor};
+  color: #c9d1d9;
 `;
+
+const Subtitle = styled.span`
+  font-size: 18px;
+  color: #c9d1d9;
+  font-weight: 600;
+  margin-top: 32px;
+`;
+
 
 const InputContainer = styled.div`
   display: flex;
@@ -33,13 +42,14 @@ const InputContainer = styled.div`
 `;
 
 const Label = styled.span`
-  color: #808080;
+  color: #ACACAC;
   font-size: 14px;
   margin: 0 0 .42857em .42857em;
 `;
 
 const Input = styled.input`
-  color: ${colors.textColor};
+  background-color: transparent;
+  color: #c9d1d9;
 `;
 
 const Button = styled.button`
@@ -58,12 +68,33 @@ const Button = styled.button`
   }
 `;
 
+const aux = [
+  {
+    transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
+    number: 4,
+  },
+  {
+    transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
+    number: 3,
+  },
+  {
+    transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
+    number: 2,
+  },
+  {
+    transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
+    number: 1,
+  }
+];
+
 const Main = () => {
   const [receiver, updateReceiver] = useState('');
   const [amount, updateAmount] = useState('');
   const [currency, updateCurrency] = useState('');
   const [enabledInputs, updateEnableInputs] = useState(true);
-  const [mempool, updateMempoolData] = useState({ show: false });
+  const [mempool, updateTransactionBlockData] = useState({ show: false });
+  const [showPendingBlock, updatePendingBlockVisibility] = useState(false);
+  const [chainData, updateChainData] = useState(aux);
   
   const hash = "299bd128c1101fd6";
 
@@ -76,7 +107,18 @@ const Main = () => {
     updateAmount('');
     updateCurrency('');
     updateEnableInputs(false);
-    updateMempoolData({show: true, data: { hash } })
+    updateTransactionBlockData({show: true, data: { hash } });
+
+    setTimeout(() => {
+      updateTransactionBlockData({ show: false });
+      updatePendingBlockVisibility(true);
+    }, 2000);
+
+    setTimeout(() => {
+      updatePendingBlockVisibility(false);
+      updateChainData([{ transactions: ['1', '2', '3'], number: (chainData[0]?.number + 1 || 1) }, ...chainData]);
+      updateEnableInputs(true);
+    }, 2000);
   };
 
   return (
@@ -123,8 +165,12 @@ const Main = () => {
       <Content size="70%">
         <Title>¿Qué sucede por atrás?</Title>
         <Card>
-          <Blockchain />
-          {mempool.show && <Mempool data={mempool.data} />}
+          <Blockchain chainData={chainData} />
+          {(mempool.show || showPendingBlock) && <Subtitle>Mempool</Subtitle>}
+          {mempool.show &&
+            <TransactionBlock data={mempool.data} />
+          }
+          {showPendingBlock && <PendingBlock />}
         </Card>
       </Content>
     </Layout>

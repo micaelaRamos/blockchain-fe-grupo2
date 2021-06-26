@@ -4,7 +4,7 @@ module.exports = {
     primary: '#858ae3ff',
     violet: '#2c0735ff',
     success: '#97dffcff',
-    error: '#613dc1ff',
+    error: '#1D2031',
     warning: '#4e148cff',
     lightGray: '#b3aeae',
     textColor: '#333',

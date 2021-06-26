@@ -23,6 +23,7 @@ const Content = styled.div`
   display: flex;
   justify-content: flex-start;
   height: calc(100% - 64px);
+  background-color: #111420;
 `;
 
 const CompanyName = styled.h1`
