@@ -85,16 +85,16 @@ const Blockchain = ({ chainData, showNewBlockMessage }) => {
       if (idx < chainData.length-1) {
         return (
         <>
-          <Block red={idx === 0 }>
+          <Block red={idx === 0 } key={`${block.number}-block`}>
             {block.transactions.map(transaction => <Transaction className="transaction-name">{transaction}</Transaction>)}
             <Number className="number">{block.number}</Number>
           </Block>
-          <Chain/>
+          <Chain key={`${block.number-1}-chain`}/>
         </>);
       }
 
       return (
-        <Block red={idx === 0 }>
+        <Block red={idx === 0 } key={`${block.number}-block`}>
           {block.transactions.map(transaction => <Transaction className="transaction-name">{transaction}</Transaction>)}
           <Number className="number">{block.number}</Number>
         </Block>

@@ -39,8 +39,8 @@ const TransactionBlock = ({ transactions }) => (
     </Container>
     <Icon type="arrow" className="pending-transactions-arrow" />
     <Container>
-      {transactions.map(transaction => 
-        <Transaction>
+      {transactions.map((transaction, idx) => 
+        <Transaction key={`${transaction}-${idx}`}>
           {transaction}
         </Transaction>
       )}

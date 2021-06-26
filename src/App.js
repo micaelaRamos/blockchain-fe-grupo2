@@ -76,24 +76,23 @@ const AuxBlock = styled.div`
   margin-top: 32px;
 `;
 
-const aux = [
-  {
+const SwitchContainer = styled.div`
+  
+`;
+
+const aux = [{
     transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
     number: 4,
-  },
-  {
+  }, {
     transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
     number: 3,
-  },
-  {
+  }, {
     transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
     number: 2,
-  },
-  {
+  }, {
     transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
     number: 1,
-  }
-];
+}];
 
 const Main = () => {
   const [receiver, updateReceiver] = useState('');
@@ -104,6 +103,9 @@ const Main = () => {
   const [showPendingBlock, updatePendingBlockVisibility] = useState(false);
   const [chainData, updateChainData] = useState(aux);
   const [newBlockMessage, updateNewBlockMessageVisibility] = useState(false);
+
+  const [pendingTransactions, updatePendingTransactions] = useState([]);
+  const [merkleOn, switchMerkle] = useState(false);
   
   const hash = "299bd128c1101fd6";
 
@@ -116,25 +118,39 @@ const Main = () => {
     updateAmount('');
     updateCurrency('');
     updateEnableInputs(false);
-    updateTransactionBlockData({show: true, data: { hash } });
 
-    setTimeout(() => {
-      updateTransactionBlockData({ show: false });
-      updatePendingBlockVisibility(true);
-    }, 4000);
-    
-    setTimeout(() => {
-      updatePendingBlockVisibility(false);
+    if (pendingTransactions.length === 0) {
+      updateTransactionBlockData({show: true, data: { hash } });
+      updatePendingTransactions([hash, ...pendingTransactions]);
+
+      setTimeout(() => {
+        updateTransactionBlockData({ show: false });
+        updatePendingBlockVisibility(true);
+        updateEnableInputs(true);
+      }, 4000);
+    } else {
+      updatePendingTransactions(prevState => {
+        const newArray = [hash, ...prevState];
+
+        if(newArray.length === 4) {
+          updateChainData([{ transactions: newArray, number: (chainData[0]?.number + 1 || 1) }, ...chainData]);
+          updateNewBlockMessageVisibility(true);
+
+          setTimeout(() => {
+            updatePendingBlockVisibility(false);
+          }, 1500);
+
+          setTimeout(() => {
+            updateNewBlockMessageVisibility(false);
+          }, 4000);
+        }
+
+        return newArray;
+      });
       updateEnableInputs(true);
-      updateChainData([{ transactions: ['1', '2', '3'], number: (chainData[0]?.number + 1 || 1) }, ...chainData]);
-      updateNewBlockMessageVisibility(true);
-    }, 8000);
-
-    setTimeout(() => {
-      updateNewBlockMessageVisibility(false);
-    }, 12000);
+    }
   };
-
+  console.log(merkleOn);
   return (
     <Layout className="transaction-page">
       <Content size="20%">
@@ -173,6 +189,13 @@ const Main = () => {
               disabled={!enabledInputs}
             />
           </InputContainer>
+          <SwitchContainer>
+            <label class="switch">
+              <input type="checkbox" checked={merkleOn} onClick={() => switchMerkle(!merkleOn)} />
+              <span class="slider round"></span>
+            </label>
+            <Label>Merkle Tree</Label>
+          </SwitchContainer>
           <Button onClick={() => onSubmit()} disabled={!enabledInputs}>ENVIAR</Button>
         </Card>
       </Content>
@@ -180,13 +203,13 @@ const Main = () => {
         <Title>¿Qué sucede por atrás?</Title>
         <Card>
           <Subtitle>Blockchain</Subtitle>
-          <Blockchain chainData={chainData} showNewBlockMessage={newBlockMessage} />
+          <Blockchain chainData={chainData} showNewBlockMessage={newBlockMessage} merkleOn />
           <AuxBlock>
             {(mempool.show || showPendingBlock) && <Subtitle>Mempool</Subtitle>}
             {mempool.show &&
-              <TransactionBlock data={{ hash }} />
+              <TransactionBlock data={{ hash }} merkleOn />
             }
-            {showPendingBlock && <PendingBlock />}
+            {showPendingBlock && <PendingBlock transactions={pendingTransactions} merkleOn />}
           </AuxBlock>
         </Card>
       </Content>
