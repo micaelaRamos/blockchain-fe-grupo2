@@ -20,6 +20,7 @@ const Block = styled.div`
   flex-wrap: wrap;
   margin: 8px 0;
   padding: 8px 8px 16px;
+  
   ${props => props.red && css `
     background-color: transparent;
     border: solid 2px #55D364;

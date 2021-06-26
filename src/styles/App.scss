@@ -23,3 +23,16 @@
   border: solid 1.5px #613dc1ff;
   outline: none;
 }
+
+.transaction-arrow {
+  height: 80px;
+  width: 80px;
+  transform: rotate(90deg);
+}
+
+.pending-transactions-arrow {
+  height: 80px;
+  width: 80px;
+  transform: rotate(-90deg);
+  margin-left: 18px;
+}

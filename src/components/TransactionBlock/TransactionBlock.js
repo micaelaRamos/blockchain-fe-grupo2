@@ -2,32 +2,48 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import Icon from '../Icon';
+
 import { colors } from '../../styles/palette';
 
 const Container = styled.div`
   display: flex;
+  align-items: center;
 `;
 
 const TransactionBlockBlock = styled.div`
-  margin-top: 18px;
-  border-radius: 4px;
-  border: solid 2px ${colors.success};
-  background-color: transparent;
-  color: ${colors.success};
-  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 12%);
-  padding: 20px;
-  margin-right: 16px;
+  border-radius: 4px;
+  border: solid 2px ${colors.success};
+  padding: 12px;
+  background-color: transparent;
+
+  width: 40%;
+  margin-top: 18px;
+
+  color: ${colors.success};
+  font-weight: 600;
+
+  + .transaction-arrow{
+    margin-right: 18px;
+  }
+`;
+
+const Description = styled.p`
+  line-height: 1.25;
+  margin: 4px;
 `;
 
 const TransactionBlock = ({ data }) => (
   <Container>
     <TransactionBlockBlock>
-      <span>Tu transacción: {data.hash}</span>
-      <p>La transacción está esperando a ser confirmada por los mineros</p>
+      <Description>Tu transacción: {data.hash}</Description>
+    </TransactionBlockBlock>
+    <Icon type="arrow" className="transaction-arrow" />
+    <TransactionBlockBlock>
+      <Description>La transacción está esperando a ser confirmada por los mineros</Description>
     </TransactionBlockBlock>
   </Container>
 );

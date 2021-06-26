@@ -12,12 +12,17 @@ import { colors } from './styles/palette';
 
 const Content = styled.div`
   padding: 24px 8%;
+
   ${props => props.size && css `
     width: ${props.size};
   `}
 
   ${props => props.bgColor && css `
     background-color: ${props.bgColor};
+  `}
+
+  ${props => props.padding && css `
+    padding: ${props.padding};
   `}
 `;
 
@@ -113,17 +118,17 @@ const Main = () => {
       updateTransactionBlockData({ show: false });
       updatePendingBlockVisibility(true);
     }, 2000);
-
+    
     setTimeout(() => {
       updatePendingBlockVisibility(false);
-      updateChainData([{ transactions: ['1', '2', '3'], number: (chainData[0]?.number + 1 || 1) }, ...chainData]);
       updateEnableInputs(true);
-    }, 2000);
+      updateChainData([{ transactions: ['1', '2', '3'], number: (chainData[0]?.number + 1 || 1) }, ...chainData]);
+    }, 4000);
   };
 
   return (
     <Layout className="transaction-page">
-      <Content size="30%">
+      <Content size="20%">
         <Title>Realizar transferencia</Title>
         <Card className="form-card">
           <InputContainer>
@@ -162,13 +167,14 @@ const Main = () => {
           <Button onClick={() => onSubmit()} disabled={!enabledInputs}>ENVIAR</Button>
         </Card>
       </Content>
-      <Content size="70%">
+      <Content size="80%" padding="24px 20px">
         <Title>¿Qué sucede por atrás?</Title>
         <Card>
+          <Subtitle>Blockchain</Subtitle>
           <Blockchain chainData={chainData} />
           {(mempool.show || showPendingBlock) && <Subtitle>Mempool</Subtitle>}
           {mempool.show &&
-            <TransactionBlock data={mempool.data} />
+            <TransactionBlock data={{ hash }} />
           }
           {showPendingBlock && <PendingBlock />}
         </Card>
