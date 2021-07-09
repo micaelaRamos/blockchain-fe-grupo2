@@ -19,9 +19,9 @@ class MerkleBlockService {
     }
   }
 
-  async getPendingMerkleTransactions(hash) {
+  async getPendingMerkleTransactions() {
     try {
-      const response = await axios.get(`http://localhost:8080/merkleblocks/${hash}`);
+      const response = await axios.get(`http://localhost:8080/merkleblocks/transaction`);
       return response;
     } catch (error) {
       return error.response;
