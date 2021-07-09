@@ -142,10 +142,20 @@ const Main = () => {
     updateCurrency('');
     updateEnableInputs(false);
     updateLoading(true);
+    const newTransaction = {
+      data: {
+        transmitter: "user1",
+        receiver: "user2",
+        mount: 2500.0,
+      },
+      hash: "213e95c12428cb59586f1a0f0f6c1d77e1522007b067ca8566d56dbbb5181da4",
+      prevHash: "7c82fbbbe56286dabb36d040df1f25594066f8525a879143c7ef4da340b75306",
+      timeStamp: 1625855083350,
+    };
 
-    service.createNewTransaction(data).then(response => {
-      // const newTransaction = response.data;
-      const newTransaction = response;
+    // service.createNewTransaction(data).then(response => {
+    //   // const newTransaction = response.data;
+    //   const newTransaction = response;
 
       // Muestro que la transacción está siendo validada
       updateMemPoolVisibility(true);
@@ -168,13 +178,14 @@ const Main = () => {
       } else {
         setTimeout(() => {
           // Oculto que la transacción está siendo validada
-          setTransactionData({ ...transactionData,  show: false });
+          setTransactionData({ ...newTransaction.data,  show: false });
+          updateMemPoolVisibility(false);
 
           // Agrego la nueva transacción a la cadena
-          // updateChainData(prevState => {
-          //   const newItem = { transactions: [hash], number: prevState[0].number + 1 };
-          //   return [newItem, ...prevState];
-          // });
+          updateChainData(prevState => {
+            const newItem = { hash: newTransaction.hash, prevHash: newTransaction.prevHash };
+            return [newItem, ...prevState];
+          });
 
           // Muestro mensaje en la blockchain
           updateNewBlockMessageVisibility(true);
@@ -187,7 +198,7 @@ const Main = () => {
           updateLoading(false);
         }, 6000);
       }
-    });
+    // });
   };
   
   return (

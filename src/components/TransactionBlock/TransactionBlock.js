@@ -13,7 +13,8 @@ const Container = styled.div`
 
 const TransactionBlockBlock = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
   border-radius: 4px;
   border: solid 2px ${colors.success};
@@ -39,7 +40,6 @@ const Description = styled.p`
 const TransactionBlock = ({ data, merkleOn = false }) => (
   <Container>
     <TransactionBlockBlock>
-      <Description>Transacción</Description>
       <Description>Emisor: {data.transmitter}</Description>
       <Description>Receptor: {data.receiver}</Description>
       <Description>Monto: {data.mount}</Description>
