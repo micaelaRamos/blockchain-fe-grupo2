@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
+
+import ReactLoading from 'react-loading';
 
 import Layout from './components/Layout';
 import Card from './components/Card';
@@ -9,6 +11,9 @@ import PendingBlock from './components/PendingBlock';
 
 import './styles/App.scss';
 import { colors } from './styles/palette';
+
+import BlockchainService from './services/Blockchain';
+import MerkleBlockService from './services/MerkleBlock';
 
 const Content = styled.div`
   padding: 24px 8%;
@@ -77,7 +82,12 @@ const AuxBlock = styled.div`
 `;
 
 const SwitchContainer = styled.div`
-  
+`;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const aux = [{
@@ -106,51 +116,52 @@ const Main = () => {
 
   const [pendingTransactions, updatePendingTransactions] = useState([]);
   const [merkleOn, switchMerkle] = useState(false);
+  const [isLoading, updateLoading] = useState(false);
   
   const hash = "299bd128c1101fd6";
+
+  useEffect(() => {
+    // BlockchainService.getBlocks().then(response => {
+    //   debugger;
+    //   updateChainData(response.data);
+    // });
+  });
 
   const onSubmit = () => {
     if (receiver === '' && amount === '') {
       return null;
     }
+    const data = {
+      transmitter: 'user',
+      receiver,
+      mount: parseFloat(amount, 10),
+    };
+    const service = merkleOn ? MerkleBlockService : BlockchainService;
 
     updateReceiver('');
     updateAmount('');
     updateCurrency('');
     updateEnableInputs(false);
+    updateLoading(true);
 
-    if (pendingTransactions.length === 0) {
+    service.createNewTransaction(data).then(response => {
       updateTransactionBlockData({show: true, data: { hash } });
-      updatePendingTransactions([hash, ...pendingTransactions]);
 
       setTimeout(() => {
         updateTransactionBlockData({ show: false });
-        updatePendingBlockVisibility(true);
-        updateEnableInputs(true);
+        updateChainData(prevState => {
+          const newItem = { transactions: [hash], number: prevState[0].number + 1 };
+          return [newItem, ...prevState];
+        });
+        updateNewBlockMessageVisibility(true);
       }, 4000);
-    } else {
-      updatePendingTransactions(prevState => {
-        const newArray = [hash, ...prevState];
 
-        if(newArray.length === 4) {
-          updateChainData([{ transactions: newArray, number: (chainData[0]?.number + 1 || 1) }, ...chainData]);
-          updateNewBlockMessageVisibility(true);
-
-          setTimeout(() => {
-            updatePendingBlockVisibility(false);
-          }, 1500);
-
-          setTimeout(() => {
-            updateNewBlockMessageVisibility(false);
-          }, 4000);
-        }
-
-        return newArray;
-      });
-      updateEnableInputs(true);
-    }
+      setTimeout(() => {
+        updateNewBlockMessageVisibility(false);
+      }, 6000);
+    });
   };
-  console.log(merkleOn);
+  
   return (
     <Layout className="transaction-page">
       <Content size="20%">
@@ -196,20 +207,27 @@ const Main = () => {
             </label>
             <Label>Merkle Tree</Label>
           </SwitchContainer>
-          <Button onClick={() => onSubmit()} disabled={!enabledInputs}>ENVIAR</Button>
+          <Button onClick={() => onSubmit()} disabled={!enabledInputs}>
+            {!isLoading && "ENVIAR"}
+            {isLoading && 
+              <LoadingContainer>
+                <ReactLoading className="login-button__loading" color={colors.white} height="20px" width="20px" />
+              </LoadingContainer>
+            }
+          </Button>
         </Card>
       </Content>
       <Content size="80%" padding="24px 32px 24px 20px">
         <Title>¿Qué sucede por atrás?</Title>
         <Card>
           <Subtitle>Blockchain</Subtitle>
-          <Blockchain chainData={chainData} showNewBlockMessage={newBlockMessage} merkleOn />
+          <Blockchain chainData={chainData} showNewBlockMessage={newBlockMessage} merkleOn={merkleOn} />
           <AuxBlock>
             {(mempool.show || showPendingBlock) && <Subtitle>Mempool</Subtitle>}
             {mempool.show &&
-              <TransactionBlock data={{ hash }} merkleOn />
+              <TransactionBlock data={{ hash }} merkleOn={merkleOn} />
             }
-            {showPendingBlock && <PendingBlock transactions={pendingTransactions} merkleOn />}
+            {showPendingBlock && merkleOn && <PendingBlock transactions={pendingTransactions} merkleOn={merkleOn} />}
           </AuxBlock>
         </Card>
       </Content>

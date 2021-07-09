@@ -3,7 +3,7 @@ import axios from 'axios';
 class MerkleBlockService {
   async getBlocks() {
     try {
-      const response = await axios.get(`/merkleblocks`);
+      const response = await axios.get(`http://localhost:8080/merkleblocks`);
       return response;
     } catch (error) {
       return error.response;
@@ -12,7 +12,7 @@ class MerkleBlockService {
 
   async getBlockByHash(hash) {
     try {
-      const response = await axios.get(`/merkleblocks/${hash}`);
+      const response = await axios.get(`http://localhost:8080/merkleblocks/${hash}`);
       return response;
     } catch (error) {
       return error.response;
@@ -21,16 +21,16 @@ class MerkleBlockService {
 
   async getPendingMerkleTransactions(hash) {
     try {
-      const response = await axios.get(`/merkleblocks/${hash}`);
+      const response = await axios.get(`http://localhost:8080/merkleblocks/${hash}`);
       return response;
     } catch (error) {
       return error.response;
     }
   }
 
-  async createNewTransaction(transaction) {
+  async createNewTransaction(transactionData) {
     try {
-      const response = await axios.post('/merkleblocks/transaction', { ...transaction });
+      const response = await axios.post('http://localhost:8080/merkleblocks/transaction', { ...transactionData });
       return response;
     } catch (error) {
       return error.response;

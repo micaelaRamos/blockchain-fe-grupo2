@@ -79,7 +79,7 @@ const MessageContainer = styled.div`
   margin-top: 20px;
 `;
 
-const Blockchain = ({ chainData, showNewBlockMessage }) => {
+const Blockchain = ({ chainData, showNewBlockMessage, merkleOn }) => {
   const renderBlocks = () => {
     let blocks = chainData.map((block, idx) => {
       if (idx < chainData.length-1) {
@@ -108,9 +108,16 @@ const Blockchain = ({ chainData, showNewBlockMessage }) => {
     {showNewBlockMessage &&
         <MessageContainer>
           <MessageBox>
+            {merkleOn && (
             <Message>
               Se agrega el bloque completo a la cadena
             </Message>
+            )}
+            {!merkleOn && (
+            <Message>
+              Se agrega la nueva transacción a un bloque en la cadena
+            </Message>
+            )}
           </MessageBox>
           <Icon type="arrow" className="new-block-arrow" />
         </MessageContainer>

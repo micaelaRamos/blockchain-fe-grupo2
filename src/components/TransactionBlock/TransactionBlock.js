@@ -36,14 +36,15 @@ const Description = styled.p`
   margin: 4px;
 `;
 
-const TransactionBlock = ({ data }) => (
+const TransactionBlock = ({ data, merkleOn = false }) => (
   <Container>
     <TransactionBlockBlock>
       <Description>Tu transacción: {data.hash}</Description>
     </TransactionBlockBlock>
     <Icon type="arrow" className="transaction-arrow" />
     <TransactionBlockBlock>
-      <Description>La transacción está esperando a ser confirmada por los mineros</Description>
+     {!merkleOn && <Description>La transacción está esperando a ser confirmada por los mineros, una vez confirmada, entrará a la blockchain</Description>}
+     {merkleOn && <Description>La transacción está esperando a ser confirmada por los mineros</Description>}
     </TransactionBlockBlock>
   </Container>
 );
