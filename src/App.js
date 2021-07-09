@@ -90,42 +90,41 @@ const LoadingContainer = styled.div`
   justify-content: center;
 `;
 
-const aux = [{
-    transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
-    number: 4,
-  }, {
-    transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
-    number: 3,
-  }, {
-    transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
-    number: 2,
-  }, {
-    transactions: ['19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn','19283y12938kjdsn'],
-    number: 1,
-}];
+const phChain = [{
+    hash: 'cbsda1923e50ef747d27dd8262beb43e69b175e01d8192055fd9b49de117ae83895',
+    prevHash: 'cb4173950ef747d27dd8262beb43e69b175e01d8192055fd9b49de117ae83895',
+  },{
+    hash: 'cb4173950ef747d27dd8262beb43e69b175e01d8192055fd9b49de117ae83895',
+    prevHash: 'cbhso234e50ef747d27dd8262beb43e69b175e01d8192055fd9b49de117ae83895',
+  },{
+    hash: 'cbhso234e50ef747d27dd8262beb43e69b175e01d8192055fd9b49de117ae83895',
+    prevHash: '',
+  },
+];
 
 const Main = () => {
   const [receiver, updateReceiver] = useState('');
   const [amount, updateAmount] = useState('');
   const [currency, updateCurrency] = useState('');
   const [enabledInputs, updateEnableInputs] = useState(true);
-  const [mempool, updateTransactionBlockData] = useState({ show: false });
-  const [showPendingBlock, updatePendingBlockVisibility] = useState(false);
-  const [chainData, updateChainData] = useState(aux);
-  const [newBlockMessage, updateNewBlockMessageVisibility] = useState(false);
 
+  const [showPendingBlock, updatePendingBlockVisibility] = useState(false);
+  const [chainData, updateChainData] = useState(phChain);
+  const [newBlockMessage, updateNewBlockMessageVisibility] = useState(false);
   const [pendingTransactions, updatePendingTransactions] = useState([]);
+  const [transactionData, setTransactionData] = useState({});
+
   const [merkleOn, switchMerkle] = useState(false);
+  const [showMempool, updateMemPoolVisibility] = useState(false);
   const [isLoading, updateLoading] = useState(false);
-  
-  const hash = "299bd128c1101fd6";
+
 
   useEffect(() => {
     // BlockchainService.getBlocks().then(response => {
-    //   debugger;
-    //   updateChainData(response.data);
+    //   console.log(response);
+    //   //updateChainData([...response, ...chainData]);
     // });
-  });
+  }, []);
 
   const onSubmit = () => {
     if (receiver === '' && amount === '') {
@@ -145,20 +144,49 @@ const Main = () => {
     updateLoading(true);
 
     service.createNewTransaction(data).then(response => {
-      updateTransactionBlockData({show: true, data: { hash } });
+      // const newTransaction = response.data;
+      const newTransaction = response;
 
-      setTimeout(() => {
-        updateTransactionBlockData({ show: false });
-        updateChainData(prevState => {
-          const newItem = { transactions: [hash], number: prevState[0].number + 1 };
-          return [newItem, ...prevState];
-        });
-        updateNewBlockMessageVisibility(true);
-      }, 4000);
+      // Muestro que la transacción está siendo validada
+      updateMemPoolVisibility(true);
+      setTransactionData({ ...newTransaction.data, show: true });
 
-      setTimeout(() => {
-        updateNewBlockMessageVisibility(false);
-      }, 6000);
+      if (merkleOn) {
+        // Oculto que la transacción está siendo validada
+        setTimeout(() => {
+          setTransactionData({ ...transactionData,  show: false });
+        }, 4000);
+
+        // Agrego la transacción al bloque de transacciones pendientes y lo muestro
+        setTimeout(() => {
+          updatePendingTransactions([ newTransaction, ...pendingTransactions]);
+          updatePendingBlockVisibility(true);
+        }, 6000);
+
+
+        // Cuando el bloque está completo, lo agrego a la blockchain
+      } else {
+        setTimeout(() => {
+          // Oculto que la transacción está siendo validada
+          setTransactionData({ ...transactionData,  show: false });
+
+          // Agrego la nueva transacción a la cadena
+          // updateChainData(prevState => {
+          //   const newItem = { transactions: [hash], number: prevState[0].number + 1 };
+          //   return [newItem, ...prevState];
+          // });
+
+          // Muestro mensaje en la blockchain
+          updateNewBlockMessageVisibility(true);
+        }, 4000);
+
+        // Oculto el mensaje de la blockchain
+        setTimeout(() => {
+          updateNewBlockMessageVisibility(false);
+          updateEnableInputs(true);
+          updateLoading(false);
+        }, 6000);
+      }
     });
   };
   
@@ -223,9 +251,9 @@ const Main = () => {
           <Subtitle>Blockchain</Subtitle>
           <Blockchain chainData={chainData} showNewBlockMessage={newBlockMessage} merkleOn={merkleOn} />
           <AuxBlock>
-            {(mempool.show || showPendingBlock) && <Subtitle>Mempool</Subtitle>}
-            {mempool.show &&
-              <TransactionBlock data={{ hash }} merkleOn={merkleOn} />
+            {(showMempool || showPendingBlock) && <Subtitle>Mempool</Subtitle>}
+            {transactionData.show &&
+              <TransactionBlock data={transactionData} merkleOn={merkleOn} />
             }
             {showPendingBlock && merkleOn && <PendingBlock transactions={pendingTransactions} merkleOn={merkleOn} />}
           </AuxBlock>

@@ -39,7 +39,10 @@ const Description = styled.p`
 const TransactionBlock = ({ data, merkleOn = false }) => (
   <Container>
     <TransactionBlockBlock>
-      <Description>Tu transacción: {data.hash}</Description>
+      <Description>Transacción</Description>
+      <Description>Emisor: {data.transmitter}</Description>
+      <Description>Receptor: {data.receiver}</Description>
+      <Description>Monto: {data.mount}</Description>
     </TransactionBlockBlock>
     <Icon type="arrow" className="transaction-arrow" />
     <TransactionBlockBlock>

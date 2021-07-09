@@ -24,7 +24,7 @@ const Block = styled.div`
   flex-wrap: wrap;
   margin: 8px 0;
   padding: 8px 8px 16px;
-  
+  min-height: 104px;
   ${props => props.red && css `
     background-color: transparent;
     border: solid 2px #55D364;
@@ -42,6 +42,9 @@ const Transaction = styled.span`
   color: white;
   margin: 6px;
   font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
   ${props => props.red && css `
     color: #55D364;
   `}
@@ -85,18 +88,20 @@ const Blockchain = ({ chainData, showNewBlockMessage, merkleOn }) => {
       if (idx < chainData.length-1) {
         return (
         <>
-          <Block red={idx === 0 } key={`${block.number}-block`}>
-            {block.transactions.map(transaction => <Transaction className="transaction-name">{transaction}</Transaction>)}
-            <Number className="number">{block.number}</Number>
+          <Block red={idx === 0 } key={`${block.hash}-block`}>
+            <Transaction className="transaction-name">Hash: {block.hash}</Transaction>
+            <Transaction className="transaction-name">Prev Hash: {block.prevHash}</Transaction>
+            <Number>{chainData.length - idx}</Number>
           </Block>
-          <Chain key={`${block.number-1}-chain`}/>
+          <Chain key={`${block.hash}-chain`}/>
         </>);
       }
 
       return (
-        <Block red={idx === 0 } key={`${block.number}-block`}>
-          {block.transactions.map(transaction => <Transaction className="transaction-name">{transaction}</Transaction>)}
-          <Number className="number">{block.number}</Number>
+        <Block red={idx === 0 } key={`${block.hash}-block`}>
+          <Transaction className="transaction-name">Hash: {block.hash}</Transaction>
+          <Transaction className="transaction-name">Prev Hash: {block.prevHash || 'N/A'}</Transaction>
+          <Number>{chainData.length - idx}</Number>
         </Block>
       );
     })
