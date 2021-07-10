@@ -8,6 +8,7 @@ import Card from './components/Card';
 import Blockchain from './components/Blockchain';
 import TransactionBlock from './components/TransactionBlock';
 import PendingBlock from './components/PendingBlock';
+import MerkleBlockDetail from './components/MerkleBlockDetail';
 
 import './styles/App.scss';
 import { colors } from './styles/palette';
@@ -112,6 +113,9 @@ const Main = () => {
   const [showMempool, updateMemPoolVisibility] = useState(false);
   const [isLoading, updateLoading] = useState(false);
 
+  const [merkleBlock, setMerkleBlock] = useState({});
+  const [showMerkleDetail, displayMerkleDetail] = useState(false);
+
   let service = BlockchainService;
 
   useEffect(() => {
@@ -204,14 +208,25 @@ const Main = () => {
       }
     // });
   };
-  
+
+  const handleBlockClick = (block) => {
+    console.log("clickck block");
+
+    displayMerkleDetail(prevState => {
+      setMerkleBlock(block);
+      return !prevState;
+    })
+  }
+
   return (
+    <>
     <Layout className="transaction-page">
+    {showMerkleDetail && merkleOn && <MerkleBlockDetail block={merkleBlock} handleClose={() => displayMerkleDetail(false)} />}
       <Content size="20%">
         <SwitchContainer>
-          <label class="switch">
+          <label className="switch">
             <input type="checkbox" checked={merkleOn} onClick={() => handleMerkleSwitch()} />
-            <span class="slider round"></span>
+            <span className="slider round"></span>
           </label>
           <Label merkle>Merkle Tree</Label>
         </SwitchContainer>
@@ -264,7 +279,12 @@ const Main = () => {
         <Title>¿Qué sucede por atrás?</Title>
         <Card>
           <Subtitle>Blockchain</Subtitle>
-          <Blockchain chainData={chainData} showNewBlockMessage={newBlockMessage} merkleOn={merkleOn} />
+          <Blockchain
+            chainData={chainData}
+            showNewBlockMessage={newBlockMessage}
+            merkleOn={merkleOn}
+            handleBlockClick={handleBlockClick}
+          />
           <AuxBlock>
             {(showMempool || showPendingBlock) && <Subtitle>Mempool</Subtitle>}
             {transactionData.show &&
@@ -275,6 +295,7 @@ const Main = () => {
         </Card>
       </Content>
     </Layout>
+    </>
   );
 }
 

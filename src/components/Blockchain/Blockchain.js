@@ -1,12 +1,14 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import Icon from '../Icon';
 
 import { colors } from '../../styles/palette';
 
-const Container = styled.div``;
+const Container = styled.div`
+  margin-top: 20px;
+`;
 
 const Content = styled.div`
   display: flex;
@@ -25,6 +27,8 @@ const Block = styled.div`
   margin: 8px 0;
   padding: 8px 8px 16px;
   min-height: 104px;
+  transition: bottom ease-in-out 0.2s;
+
   ${props => props.firstBlock && css `
     background-color: transparent;
     border: solid 2px #55D364;
@@ -32,6 +36,11 @@ const Block = styled.div`
 
   ${props => props.merkleBlock && css `
       width: 200px;
+
+      &:hover {
+        cursor: pointer;
+        bottom: 8px;
+      }
   `}
 `;
 
@@ -86,13 +95,13 @@ const MessageContainer = styled.div`
   margin-top: 20px;
 `;
 
-const Blockchain = ({ chainData, showNewBlockMessage, merkleOn }) => {
+const Blockchain = ({ chainData, showNewBlockMessage, merkleOn, handleBlockClick }) => {
   const renderBlocks = () => {
     let blocks = chainData.map((block, idx) => {
       if (idx < chainData.length-1) {
         return (
         <>
-          <Block firstBlock={idx === 0 } key={`${block.hash || block.prevHash}-block`} merkleBlock={merkleOn}>
+          <Block firstBlock={idx === 0 } key={`${block.hash || block.prevHash}-block`} merkleBlock={merkleOn} onClick={merkleOn ? () => handleBlockClick(block) : () => {}}>
             <Transaction className="transaction-name">Hash: {block.hash || block.merkleTree.tree[block.merkleTree.tree.length - 1]}</Transaction>
             {block.prevHash && <Transaction className="transaction-name">Prev Hash: {block.prevHash || "0"}</Transaction>}
             <Number>{chainData.length - idx}</Number>
@@ -102,7 +111,7 @@ const Blockchain = ({ chainData, showNewBlockMessage, merkleOn }) => {
       }
 
       return (
-        <Block firstBlock={idx === 0 } key={`${block.hash || block.prevHash}-block`} merkleBlock={merkleOn}>
+        <Block firstBlock={idx === 0 } key={`${block.hash || block.prevHash}-block`} merkleBlock={merkleOn} onClick={merkleOn ? () => handleBlockClick(block) : () => {}}>
           <Transaction className="transaction-name">Hash: {block.hash || block.merkleTree.tree[block.merkleTree.tree.length - 1]}</Transaction>
           {block.prevHash && <Transaction className="transaction-name">Prev Hash: {block.prevHash || "0"}</Transaction>}
           <Number>{chainData.length - idx}</Number>
@@ -112,6 +121,7 @@ const Blockchain = ({ chainData, showNewBlockMessage, merkleOn }) => {
 
     return blocks;
   };
+
   return (
     <Container>
     {showNewBlockMessage &&
