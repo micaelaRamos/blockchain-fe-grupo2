@@ -25,9 +25,13 @@ const Block = styled.div`
   margin: 8px 0;
   padding: 8px 8px 16px;
   min-height: 104px;
-  ${props => props.red && css `
+  ${props => props.firstBlock && css `
     background-color: transparent;
     border: solid 2px #55D364;
+  `}
+
+  ${props => props.merkleBlock && css `
+      width: 200px;
   `}
 `;
 
@@ -45,7 +49,7 @@ const Transaction = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
 
-  ${props => props.red && css `
+  ${props => props.firstBlock && css `
     color: #55D364;
   `}
 `;
@@ -82,15 +86,27 @@ const MessageContainer = styled.div`
   margin-top: 20px;
 `;
 
+const Tree = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+`;
+
+
 const Blockchain = ({ chainData, showNewBlockMessage, merkleOn }) => {
   const renderBlocks = () => {
     let blocks = chainData.map((block, idx) => {
       if (idx < chainData.length-1) {
         return (
         <>
-          <Block red={idx === 0 } key={`${block.hash}-block`}>
-            <Transaction className="transaction-name">Hash: {block.hash}</Transaction>
+          <Block firstBlock={idx === 0 } key={`${block.hash || block.prevHash}-block`} merkleBlock={merkleOn}>
+            {block.hash && <Transaction className="transaction-name">Hash: {block.hash}</Transaction>}
             {block.prevHash && block.prevHash !== '0' && <Transaction className="transaction-name">Prev Hash: {block.prevHash}</Transaction>}
+            {merkleOn && block.merkleTree && (
+              <Tree>
+                {block.merkleTree.tree.map(child => <Transaction>{child}</Transaction>)}
+              </Tree>
+            )}
             <Number>{chainData.length - idx}</Number>
           </Block>
           <Chain key={`${block.hash}-chain`}/>
@@ -98,9 +114,14 @@ const Blockchain = ({ chainData, showNewBlockMessage, merkleOn }) => {
       }
 
       return (
-        <Block red={idx === 0 } key={`${block.hash}-block`}>
-          <Transaction className="transaction-name">Hash: {block.hash}</Transaction>
+        <Block firstBlock={idx === 0 } key={`${block.hash || block.prevHash}-block`} merkleBlock={merkleOn}>
+          {block.hash && <Transaction className="transaction-name">Hash: {block.hash}</Transaction>}
           {block.prevHash && block.prevHash !== '0' && <Transaction className="transaction-name">Prev Hash: {block.prevHash}</Transaction>}
+          {merkleOn && block.merkleTree && (
+            <Tree>
+              {block.merkleTree.tree.map(child => <Transaction>{child}</Transaction>)}
+            </Tree>
+          )}
           <Number>{chainData.length - idx}</Number>
         </Block>
       );
