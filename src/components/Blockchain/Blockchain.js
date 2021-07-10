@@ -90,7 +90,7 @@ const Blockchain = ({ chainData, showNewBlockMessage, merkleOn }) => {
         <>
           <Block red={idx === 0 } key={`${block.hash}-block`}>
             <Transaction className="transaction-name">Hash: {block.hash}</Transaction>
-            <Transaction className="transaction-name">Prev Hash: {block.prevHash}</Transaction>
+            {block.prevHash && block.prevHash !== '0' && <Transaction className="transaction-name">Prev Hash: {block.prevHash}</Transaction>}
             <Number>{chainData.length - idx}</Number>
           </Block>
           <Chain key={`${block.hash}-chain`}/>
@@ -100,7 +100,7 @@ const Blockchain = ({ chainData, showNewBlockMessage, merkleOn }) => {
       return (
         <Block red={idx === 0 } key={`${block.hash}-block`}>
           <Transaction className="transaction-name">Hash: {block.hash}</Transaction>
-          <Transaction className="transaction-name">Prev Hash: {block.prevHash || 'N/A'}</Transaction>
+          {block.prevHash && block.prevHash !== '0' && <Transaction className="transaction-name">Prev Hash: {block.prevHash}</Transaction>}
           <Number>{chainData.length - idx}</Number>
         </Block>
       );
