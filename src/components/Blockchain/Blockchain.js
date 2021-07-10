@@ -96,6 +96,8 @@ const MessageContainer = styled.div`
 `;
 
 const Blockchain = ({ chainData, showNewBlockMessage, merkleOn, handleBlockClick }) => {
+  if (chainData.length === 0) return null;
+  
   const renderBlocks = () => {
     let blocks = chainData.map((block, idx) => {
       if (idx < chainData.length-1) {
