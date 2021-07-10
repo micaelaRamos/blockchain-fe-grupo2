@@ -54,6 +54,11 @@ const Label = styled.span`
   color: #ACACAC;
   font-size: 14px;
   margin: 0 0 .42857em .42857em;
+
+  ${props => props.merkle && css `
+    font-size: 18px;
+    font-weight: bold;
+  `}
 `;
 
 const Input = styled.input`
@@ -82,6 +87,7 @@ const AuxBlock = styled.div`
 `;
 
 const SwitchContainer = styled.div`
+  margin-bottom: 32px;
 `;
 
 const LoadingContainer = styled.div`
@@ -90,18 +96,6 @@ const LoadingContainer = styled.div`
   justify-content: center;
 `;
 
-const phChain = [{
-    hash: 'cbsda1923e50ef747d27dd8262beb43e69b175e01d8192055fd9b49de117ae83895',
-    prevHash: 'cb4173950ef747d27dd8262beb43e69b175e01d8192055fd9b49de117ae83895',
-  },{
-    hash: 'cb4173950ef747d27dd8262beb43e69b175e01d8192055fd9b49de117ae83895',
-    prevHash: 'cbhso234e50ef747d27dd8262beb43e69b175e01d8192055fd9b49de117ae83895',
-  },{
-    hash: 'cbhso234e50ef747d27dd8262beb43e69b175e01d8192055fd9b49de117ae83895',
-    prevHash: '',
-  },
-];
-
 const Main = () => {
   const [receiver, updateReceiver] = useState('');
   const [amount, updateAmount] = useState('');
@@ -109,7 +103,7 @@ const Main = () => {
   const [enabledInputs, updateEnableInputs] = useState(true);
 
   const [showPendingBlock, updatePendingBlockVisibility] = useState(false);
-  const [chainData, updateChainData] = useState(phChain);
+  const [chainData, updateChainData] = useState([]);
   const [newBlockMessage, updateNewBlockMessageVisibility] = useState(false);
   const [pendingTransactions, updatePendingTransactions] = useState([]);
   const [transactionData, setTransactionData] = useState({});
@@ -118,13 +112,24 @@ const Main = () => {
   const [showMempool, updateMemPoolVisibility] = useState(false);
   const [isLoading, updateLoading] = useState(false);
 
+  let service = BlockchainService;
 
   useEffect(() => {
-    // BlockchainService.getBlocks().then(response => {
-    //   console.log(response);
-    //   //updateChainData([...response, ...chainData]);
-    // });
-  }, []);
+    service = merkleOn ? MerkleBlockService : BlockchainService;
+
+    service.getBlocks().then(response => {
+      if (response && response.data.length > 0) {
+        updateChainData([...response.data]);
+      }
+    });
+  }, [merkleOn]);
+
+  const handleMerkleSwitch = () => {
+    switchMerkle(prevState => {
+      updateChainData([]);
+      return !prevState;
+    });
+  }
 
   const onSubmit = () => {
     if (receiver === '' && amount === '') {
@@ -135,7 +140,6 @@ const Main = () => {
       receiver,
       mount: parseFloat(amount, 10),
     };
-    const service = merkleOn ? MerkleBlockService : BlockchainService;
 
     updateReceiver('');
     updateAmount('');
@@ -204,6 +208,13 @@ const Main = () => {
   return (
     <Layout className="transaction-page">
       <Content size="20%">
+        <SwitchContainer>
+          <label class="switch">
+            <input type="checkbox" checked={merkleOn} onClick={() => handleMerkleSwitch()} />
+            <span class="slider round"></span>
+          </label>
+          <Label merkle>Merkle Tree</Label>
+        </SwitchContainer>
         <Title>Realizar transferencia</Title>
         <Card className="form-card">
           <InputContainer>
@@ -239,13 +250,6 @@ const Main = () => {
               disabled={!enabledInputs}
             />
           </InputContainer>
-          <SwitchContainer>
-            <label class="switch">
-              <input type="checkbox" checked={merkleOn} onClick={() => switchMerkle(!merkleOn)} />
-              <span class="slider round"></span>
-            </label>
-            <Label>Merkle Tree</Label>
-          </SwitchContainer>
           <Button onClick={() => onSubmit()} disabled={!enabledInputs}>
             {!isLoading && "ENVIAR"}
             {isLoading && 
