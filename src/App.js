@@ -115,16 +115,24 @@ const Main = () => {
   const [merkleBlock, setMerkleBlock] = useState({});
   const [showMerkleDetail, displayMerkleDetail] = useState(false);
 
-  let service = BlockchainService;
-
   useEffect(() => {
-    service = merkleOn ? MerkleBlockService : BlockchainService;
+    const service = merkleOn ? MerkleBlockService : BlockchainService;
 
     service.getBlocks().then(response => {
       if (response && response.data.length > 0) {
         updateChainData(response.data.reverse());
       }
     });
+
+    if (merkleOn) {
+      service.getPendingMerkleTransactions().then(response => {
+        if (response.data.length > 0) {
+          updatePendingTransactions(response.data);
+          updateMemPoolVisibility(true);
+          updatePendingBlockVisibility(true);
+        }
+      })
+    }
   }, [merkleOn]);
 
   const handleMerkleSwitch = () => {
@@ -150,28 +158,48 @@ const Main = () => {
     updateEnableInputs(false);
     updateLoading(true);
 
-    service.createNewTransaction(data).then(response => {
-      const newTransaction = response.data;
+    const transactionService = merkleOn ? MerkleBlockService : BlockchainService;
 
-      // Muestro que la transacción está siendo validada
+    transactionService.createNewTransaction(data).then(response => {
+      const newTransaction = response.data;
+      
       updateMemPoolVisibility(true);
-      setTransactionData({ ...newTransaction.data, show: true });
 
       if (merkleOn) {
+        setTransactionData({ ...data, show: true });
+        debugger;
         // Oculto que la transacción está siendo validada
         setTimeout(() => {
-          setTransactionData({ ...transactionData,  show: false });
+          setTransactionData({ ...data,  show: false });
+
+          // Muestro las transacciones pendientes si hay
+          updatePendingTransactions(newTransaction);
+
+          if (!!newTransaction.length) {
+            updatePendingBlockVisibility(true);
+          } else {
+            updatePendingBlockVisibility(false);
+            updateMemPoolVisibility(false);
+            
+            // Si no hay transacciones pendientes, el bloque está completo
+            transactionService.getBlocks().then(response => {
+                updateChainData(response.data.reverse());
+              });
+
+            // Muestro mensaje en la blockchain
+            updateNewBlockMessageVisibility(true);
+          }
         }, 4000);
 
-        // Agrego la transacción al bloque de transacciones pendientes y lo muestro
         setTimeout(() => {
-          updatePendingTransactions([ newTransaction, ...pendingTransactions]);
-          updatePendingBlockVisibility(true);
-        }, 6000);
-
-
-        // Cuando el bloque está completo, lo agrego a la blockchain
+          updateNewBlockMessageVisibility(false);
+          updateEnableInputs(true);
+          updateLoading(false);
+        }, 8000);
       } else {
+        // Muestro que la transacción está siendo validada
+        setTransactionData({ ...newTransaction.data, show: true });
+
         setTimeout(() => {
           // Oculto que la transacción está siendo validada
           setTransactionData({ ...newTransaction.data,  show: false });

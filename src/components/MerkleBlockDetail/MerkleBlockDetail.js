@@ -110,7 +110,7 @@ const MerkleBlockDetail = ({ block, handleClose }) => {
             <Transaction>
               <TransactionData width="30%">Timestamp: {transaction.timeStamp}</TransactionData>
               <TransactionData width="15%">Monto: {transaction.mount}</TransactionData>
-              <TransactionData width="55%">Hash: {transaction.hash}</TransactionData>
+              <TransactionData width="55%">{transaction.hash}</TransactionData>
             </Transaction>
           ))}
         </TransactionsContainer>

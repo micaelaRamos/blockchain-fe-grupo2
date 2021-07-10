@@ -40,8 +40,8 @@ const TransactionBlock = ({ transactions }) => (
     <Icon type="arrow" className="pending-transactions-arrow" />
     <Container>
       {transactions.map((transaction, idx) => 
-        <Transaction key={`${transaction}-${idx}`}>
-          {transaction}
+        <Transaction key={`${transaction.hash}-${idx}`}>
+          {transaction.hash}
         </Transaction>
       )}
     </Container>

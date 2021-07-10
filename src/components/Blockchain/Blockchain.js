@@ -131,7 +131,7 @@ const Blockchain = ({ chainData, showNewBlockMessage, merkleOn, handleBlockClick
           <MessageBox>
             {merkleOn && (
             <Message>
-              Se agrega el bloque completo a la cadena
+              Como el bloque se completó, se agrega a la cadena
             </Message>
             )}
             {!merkleOn && (
