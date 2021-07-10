@@ -119,7 +119,7 @@ const Main = () => {
 
     service.getBlocks().then(response => {
       if (response && response.data.length > 0) {
-        updateChainData([...response.data]);
+        updateChainData(response.data.reverse());
       }
     });
   }, [merkleOn]);
