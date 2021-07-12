@@ -9,6 +9,7 @@ import Blockchain from './components/Blockchain';
 import TransactionBlock from './components/TransactionBlock';
 import PendingBlock from './components/PendingBlock';
 import MerkleBlockDetail from './components/MerkleBlockDetail';
+import Snackbar from './components/Snackbar';
 
 import './styles/App.scss';
 import { colors } from './styles/palette';
@@ -113,6 +114,8 @@ const Main = () => {
 
   const [merkleBlock, setMerkleBlock] = useState({});
   const [showMerkleDetail, displayMerkleDetail] = useState(false);
+
+  const [showSnackbar, updateSnackbarVisibility] = useState(false);
 
   useEffect(() => {
     const service = merkleOn ? MerkleBlockService : BlockchainService;
@@ -222,6 +225,13 @@ const Main = () => {
           updateLoading(false);
         }, 6000);
       }
+    }).catch(error => {
+      updateSnackbarVisibility(true);
+      console.log(error);
+
+      setTimeout(() => {
+        updateSnackbarVisibility(false);
+      }, 2000);
     });
   };
 
@@ -237,6 +247,11 @@ const Main = () => {
   return (
     <>
     <Layout className="transaction-page">
+      <Snackbar
+        type="error"
+        show={showSnackbar}
+        message="Uno o más bloques fueron comprometidos, la transacción no pudo concretarse."
+      />
     {showMerkleDetail && merkleOn && <MerkleBlockDetail block={merkleBlock} handleClose={() => displayMerkleDetail(false)} />}
       <Content size="20%">
         <SwitchContainer>
