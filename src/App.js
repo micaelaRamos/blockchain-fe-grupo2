@@ -131,6 +131,9 @@ const Main = () => {
           updatePendingBlockVisibility(true);
         }
       })
+    } else {
+      updateMemPoolVisibility(false);
+      updatePendingBlockVisibility(false);
     }
   }, [merkleOn]);
 
@@ -146,7 +149,7 @@ const Main = () => {
       return null;
     }
     const data = {
-      transmitter: 'user',
+      transmitter: 'Usuario Transmisor',
       receiver,
       mount: parseFloat(amount, 10),
     };
