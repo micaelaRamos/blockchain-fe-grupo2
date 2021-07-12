@@ -165,7 +165,6 @@ const Main = () => {
 
       if (merkleOn) {
         setTransactionData({ ...data, show: true });
-        debugger;
         // Oculto que la transacción está siendo validada
         setTimeout(() => {
           setTransactionData({ ...data,  show: false });
