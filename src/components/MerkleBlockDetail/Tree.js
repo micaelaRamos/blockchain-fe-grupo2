@@ -53,16 +53,16 @@ const Node = styled.div`
 
 const Tree = ({ tree }) =>  (
   <TreeContainer>
-    <Node root>{tree[0]}</Node>
+    <Node root>{tree[6]}</Node>
     <NodesContainer>
-      <Node parent>{tree[1]}</Node>
-      <Node parent>{tree[2]}</Node>
+      <Node parent>{tree[4]}</Node>
+      <Node parent>{tree[5]}</Node>
     </NodesContainer>
     <NodesContainer>
+      <Node leaf>{tree[0]}</Node>
+      <Node leaf>{tree[1]}</Node>
+      <Node leaf>{tree[2]}</Node>
       <Node leaf>{tree[3]}</Node>
-      <Node leaf>{tree[4]}</Node>
-      <Node leaf>{tree[5]}</Node>
-      <Node leaf>{tree[6]}</Node>
     </NodesContainer>
   </TreeContainer>
 );

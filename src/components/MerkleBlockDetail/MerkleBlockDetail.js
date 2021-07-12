@@ -63,12 +63,21 @@ const Transaction = styled.div`
 
 const TransactionData = styled.div`
   display: flex;
-  font-size: 18px;
-  color: ${colors.white};
   padding: 4px;
 
   ${props => props.width && css `
     width: ${props.width};
+  `}
+`;
+
+const TransactionText = styled.span`
+  font-size: 18px;
+  color: ${colors.white};
+
+  ${props => props.hash && css`
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #3fb950;
   `}
 `;
 
@@ -93,31 +102,30 @@ const CloseButton = styled.button`
 const MerkleBlockDetail = ({ block, handleClose }) => {
   const { merkleTree } = block;
   const { dataList, tree } = merkleTree;
-  const reversedTree = tree.reverse();
 
   return (
     <DetailBlockModal>
       <ModalContent>
         <CloseButton onClick={() => handleClose()}>Cerrar</CloseButton>
         <CenteredContent>
-          <Title>Detalle del bloque <strong>{reversedTree[0]}</strong></Title>
+          <Title>Detalle del bloque <strong>{tree[6]}</strong></Title>
         </CenteredContent>
         <Content>
           <Subtitle>Transacciones del bloque</Subtitle>
         </Content>
         <TransactionsContainer>
           {dataList.map(transaction => (
-            <Transaction>
-              <TransactionData width="30%">Timestamp: {transaction.timeStamp}</TransactionData>
-              <TransactionData width="15%">Monto: {transaction.mount}</TransactionData>
-              <TransactionData width="55%">{transaction.hash}</TransactionData>
+            <Transaction key={transaction.hash}>
+              <TransactionData width="30%"><TransactionText>Timestamp: {transaction.timeStamp}</TransactionText></TransactionData>
+              <TransactionData width="15%"><TransactionText>Monto: {transaction.mount}</TransactionText></TransactionData>
+              <TransactionData width="55%"><TransactionText hash>{transaction.hash}</TransactionText></TransactionData>
             </Transaction>
           ))}
         </TransactionsContainer>
         <Content>
           <Subtitle>Árbol</Subtitle>
         </Content>
-        <Tree tree={reversedTree} />
+        <Tree tree={tree} />
       </ModalContent>
     </DetailBlockModal>
   );
