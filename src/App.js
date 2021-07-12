@@ -227,6 +227,8 @@ const Main = () => {
       }
     }).catch(error => {
       updateSnackbarVisibility(true);
+      updateEnableInputs(true);
+      updateLoading(false);
       console.log(error);
 
       setTimeout(() => {

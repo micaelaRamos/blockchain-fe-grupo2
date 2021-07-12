@@ -6,7 +6,7 @@ class BlockchainService {
       const response = await axios.get('http://localhost:8080/blocks');
       return response;
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -15,7 +15,7 @@ class BlockchainService {
       const response = await axios.get(`http://localhost:8080/blocks/${hash}`, {});
       return response;
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 
@@ -24,7 +24,7 @@ class BlockchainService {
       const response = await axios.post('http://localhost:8080/blocks/transaction', { ...transactionData });
       return response;
     } catch (error) {
-      return error.response;
+      throw error;
     }
   }
 }
