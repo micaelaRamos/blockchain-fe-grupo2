@@ -99,7 +99,6 @@ const LoadingContainer = styled.div`
 const Main = () => {
   const [receiver, updateReceiver] = useState('');
   const [amount, updateAmount] = useState('');
-  const [currency, updateCurrency] = useState('');
   const [enabledInputs, updateEnableInputs] = useState(true);
 
   const [showPendingBlock, updatePendingBlockVisibility] = useState(false);
@@ -154,7 +153,6 @@ const Main = () => {
 
     updateReceiver('');
     updateAmount('');
-    updateCurrency('');
     updateEnableInputs(false);
     updateLoading(true);
 
@@ -267,17 +265,6 @@ const Main = () => {
               type="text"
               value={amount}
               onChange={(e) => updateAmount(e.currentTarget.value)}
-              disabled={!enabledInputs}
-            />
-          </InputContainer>
-          <InputContainer>
-            <Label>Tipo de moneda</Label>
-            <Input
-              className="text-input"
-              id="currencyInput"
-              type="text"
-              value={currency}
-              onChange={(e) => updateCurrency(e.currentTarget.value)}
               disabled={!enabledInputs}
             />
           </InputContainer>
