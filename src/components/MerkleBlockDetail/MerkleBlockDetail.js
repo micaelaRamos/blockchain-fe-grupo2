@@ -12,7 +12,7 @@ const DetailBlockModal = styled.div`
   z-index: 3;
   right: 56px;
   left: 56px;
-  top: 78px;
+  top: 36px;
 
   border-radius: 6px;
   background-color: #1D2031;
